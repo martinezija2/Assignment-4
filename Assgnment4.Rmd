@@ -1,0 +1,69 @@
+--- 
+title: "assignment 4"
+author: "Martin Poznanovic
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+options(digits = 3)
+library(tidyverse)
+library(readr)
+library(stringr)
+library(dplyr)
+```
+
+```{r}
+pitch <- read_csv("http://srvanderplas.github.io/rwrks/03-r-format/data/pitch.csv")
+```
+
+
+
+```{r}
+####TASK 1
+#First I want to isolate the curveballs so we narrow our data
+curveball_pitches <- pitch %>% filter(pitch_type == "CU") 
+
+#Now after we have CU isolated, we want to see the ones that actually were successful
+# I had no previous baseball knowledge so based on information from discussions in canvas, I know that C and X are really good pitches.
+successful_CU <- curveball_pitches %>% filter(action_result == "X" | action_result == "C")
+ 
+# For next step, I would like to try to track the spin rate
+sccessful_CU_spin <- successful_CU %>% arrange(desc(spin_rate))
+# now we have data frame with spins in descending order 
+top_10 <- head(successful_CU, 10)
+# my idea is to observe top 10 pitches and see what PlayerIDs are most of the time there
+top_10$playerid
+
+#I can conclude that 3 players with best pitches(based on spin rate) are with following IDs: 959, 2795, 8247
+
+sum(top_10$spin_rate)
+#I added up all spin rates
+
+
+
+
+
+####TASK 2
+census <- read_csv("http://srvanderplas.github.io/rwrks/03-r-format/data/occupation-1870.csv")
+
+job <- census %>% gather(Occupation,number,"Agriculture.Male":"School.Female")
+#we have it in long format now
+jobs_separated <- job %>% separate(Occupation, c('Occupation', 'Gender'))
+
+ggplot(jobs_separated, aes(x=Occupation, y=number, color=Gender)) + geom_point()
+
+ggplot(jobs_separated, aes(x=Gender, y=number, color=Occupation)) + geom_point()
+
+#Now I have  two different plots one is showing different jobs within gender and the other one is showing how gender is widespread within different jobs, we can see how it differs depending on gender, the difference is way more notable than today. 
+
+## With geom_col plot we can clearly see what jobs were most popular in that age and what genders tended to do the most
+
+ggplot(jobs_separated, aes(x=Gender, y= number, color=Occupation)) + geom_col()
+
+
+
+
+
+
+```
+
